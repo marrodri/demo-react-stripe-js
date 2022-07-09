@@ -46,14 +46,20 @@ const CheckoutForm = ({ price, onSuccessfulCheckout }) => {
       amount: price * 100,
     });
     console.log(clientSecret);
-    const cardElement = elements.getElement(CardElement);
+    const cardElement = elements.getElement("card");
 
-    const paymentMethodReq = stripe.createPaymentMethod({
+    const paymentMethodReq = await stripe.createPaymentMethod({
       type: "card",
       card: cardElement,
       billing_details: billingDetails,
     });
     console.log(paymentMethodReq);
+
+    const confirmCardPayment = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: paymentMethodReq.paymentMethod.id,
+    });
+    console.log(confirmCardPayment)
+    onSuccessfulCheckout();
   };
 
   const cardElementOptions = {
